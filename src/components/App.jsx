@@ -1,25 +1,47 @@
-import React, { useState } from "react";
-
-import Header from "./Header";
+import { useEffect, useState } from "react";
 import ToyForm from "./ToyForm";
-import ToyContainer from "./ToyContainer";
+import ToyCard from "./ToyCard";
 
 function App() {
-  const [showForm, setShowForm] = useState(false);
+  const [toys, setToys] = useState([]);
 
-  function handleClick() {
-    setShowForm((showForm) => !showForm);
+  useEffect(() => {
+    fetch("http://localhost:3000/toys")
+      .then((res) => res.json())
+      .then((data) => setToys(data));
+  }, []);
+
+  function handleLike(updatedToy) {
+    setToys((prev) =>
+      prev.map((toy) => (toy.id === updatedToy.id ? updatedToy : toy))
+    );
+  }
+
+  function handleDelete(id) {
+    setToys((prev) => prev.filter((toy) => toy.id !== id));
+  }
+
+  function addToy(newToy) {
+    setToys((prev) => [...prev, newToy]);
   }
 
   return (
-    <>
-      <Header />
-      {showForm ? <ToyForm /> : null}
-      <div className="buttonContainer">
-        <button onClick={handleClick}>Add a Toy</button>
+    <div className="app">
+      <h1>Toy Tales</h1>
+
+      <ToyForm addToy={addToy} />
+
+      <div className="toy-container">
+        {toys.map((toy) => (
+          <ToyCard
+            key={toy.id}
+            toy={toy}
+            onLike={handleLike}
+            onDelete={handleDelete}
+          />
+        ))}
       </div>
-      <ToyContainer />
-    </>
+    </div>
   );
 }
 

@@ -44,7 +44,7 @@ function ToyForm({ addToy }) {
       />
 
       {/* MUST MATCH TEST */}
-      <button type="submit">Add a Toy</button>
+      <button type="submit">Create New Toy</button>
     </form>
   );
 }
